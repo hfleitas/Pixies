@@ -1,5 +1,7 @@
-﻿-- Troll Hunters: http://trollhunters.wikia.com/wiki/Trollhunters_Wiki , https://en.wikipedia.org/wiki/Trollhunters
-if db_id(N'ᕙ༼,இܫஇ,༽ᕗ') is not null 
+﻿--  Troll Hunters: http://trollhunters.wikia.com/wiki/Trollhunters_Wiki , https://en.wikipedia.org/wiki/Trollhunters
+--  :connect localhost
+--  :connect TrollHunters
+if db_id(N'ᕙ༼,இܫஇ,༽ᕗ') is not null --drop/create db 
 begin
 	alter database [ᕙ༼,இܫஇ,༽ᕗ] set single_user with rollback immediate 
 	drop database [ᕙ༼,இܫஇ,༽ᕗ] end
@@ -12,45 +14,47 @@ go
 
 use [ᕙ༼,இܫஇ,༽ᕗ]
 go 
-
---  +-----------+
---  | Character |
---  +-----------+
-create table [Character] (
-	CharacterId int identity(1,1) not null,
-    FullName varchar(50) not null,
-	Affiliation varchar(60), 
-	Category varchar(10), 
-	Aka varchar(300), --*
-	[Status] varchar(35),
-	Race varchar(50),
-	Age int,
-	Home varchar(50),
-	Relatives varchar(300), --*
-	Weapons varchar(100), --*
-	EyeColor varchar(20),
-	HairColor varchar(50),
-	Minions varchar(100),
-	VoicedBy varchar(50),
-constraint pk_Character primary key clustered (CharacterId asc));
+--  +------+
+--  | Lore |
+--  +------+
+create table [Character] ( 
+	CharacterId		int identity(1,1)	not null,
+    FullName		varchar(50)			not null,
+	Affiliation		varchar(60)			null, 
+	Category		varchar(10)			null, 
+	Aka				varchar(300)		null, --*
+	[Status]		varchar(35)			null,
+	Race			varchar(50)			null,
+	Age				int					null,
+	Home			varchar(50)			null,
+	Relatives		varchar(300)		null, --*
+	Weapons			varchar(100)		null, --*
+	EyeColor		varchar(20)			null,
+	HairColor		varchar(50)			null,
+	Minions			varchar(100)		null,
+	VoicedBy		varchar(50)			null,
+	constraint pk_Character primary key clustered (CharacterId asc));
 go
-
---  +------------+
---  | References |
---  +------------+
-create table Locations (LocationId int identity(1,1) not null, LocationName varchar(50), CharacterId int foreign key references [Character](CharacterId), constraint pk_Locations primary key clustered (LocationId asc));
+create table [Locations] ( LocationId int identity(1,1) not null, LocationName varchar(50), CharacterId int foreign key references [Character](CharacterId), constraint pk_Locations primary key clustered (LocationId asc));
 --create table Aka (AkaId int identity(1,1) not null, Aka varchar(50), CharacterId int foreign key references [Character](CharacterId), ByCharacterId int foreign key references [Character](CharacterId), constraint pk_Aka primary key clustered (AkaId asc));
 --create table Relatives (RelativeId int identity(1,1) not null, CharacterId int foreign key references [Character](CharacterId), RelativeCharacterId int foreign key references [Character](CharacterId), Relation varchar(50), constraint pk_Relative primary key clustered (RelativeId asc));
 --create table Weapons (WeaponId int identity(1,1) not null, CharacterId int foreign key references [Character](CharacterId), WeaponName varchar(50), [Type] varchar(20), Origin varchar(20), constraint pk_Weapons primary key clustered (WeaponId asc));
 --create table WeaponUser (WeaponUserId int identity(1,1) not null, CharacterId int foreign key references [Character](CharacterId), Occurrance varchar(50), Victims varchar(50), constraint pk_WeaponUser primary key clustered (WeaponUserId asc)); 
 go
+create table [Episode] ( 
+    CharacterId		int           not null,
+    FullName		nvarchar(64)  not null,
+    VoicedBy		nvarchar(64)  not null,
+	BirthYear		int			  not null, 
+	Category		nvarchar(64)  not null,
+	[Status]		nvarchar(64)  not null,
+    Age				int			  not null
+    constraint PK_Episode primary key clustered (CharacterId asc));
+go
 
---  +------+
---  | Lore |
---  +------+
-set identity_insert [Character] on; --drop table [Character]
+set identity_insert [Character] on; --drop table [Character] 
 	insert into [Character] (CharacterId, FullName, Affiliation, Category, Aka, [Status], Race, Age, Home, Relatives, Weapons, EyeColor, HairColor, Minions, VoicedBy) values 
-	(1,'Jim Lake Jr.','Good','Hero','Young Atlas, Jimbo, Master Jim, Fleshbag, Jim "Fake" Jr., Jimmy Jam, Little Gynt','Alive','Human',16,'Arcadia Oaks','Jim Lake Sr., Barbara Lake, Claire Nuñez','Sword of Daylight, Sword of Eclipse','Blue','Black','Toby Domzalski','Anton Yelchin')
+	 (1,'Jim Lake Jr.','Good','Hero','Young Atlas, Jimbo, Master Jim, Fleshbag, Jim "Fake" Jr., Jimmy Jam, Little Gynt','Alive','Human',16,'Arcadia Oaks','Jim Lake Sr., Barbara Lake, Claire Nuñez','Sword of Daylight, Sword of Eclipse','Blue','Black','Toby Domzalski','Anton Yelchin')
 	,(2,'Claire Maria Nuñez','Good (cursed by overpowering the shadow staff)','Hero','C-bomb, Shadowdancer','Alive','Human',15,'Arcadia','Mr. Nuñez, Mrs. Nuñez, Baby Enrique, Jim Lake Jr.','Shadow Staff','Brown','Black with white and purple streaks','NotEnrique','Lexi Medrano')
 	,(3,'Gunmar the Black','Evil, Gumm-Gumm Army, The Janus Order','Villain','Dark Underlord, Skullcrusher','Alive','Gumm-Gumm',null,'Darklands, Trollmarket','Bular','Decimaar Blade','Blue','Black','Otto Scaarbach, Stricklander, Nomura, Gladys, NotEnrique, Stalklings, Various Changeling Trolls','Clancy Brown')
 	,(4,'Ararghaumont','Gunmar, Heartstone Trollmarket, Trollhunters','Hero','AAARRRGGHH!!!, Wingman','Alive','Krubera Troll',null,'Deep Caverns, Heartstone Trollmarket',null,'Fists and Strength','Green','Dark green',null,'Fred Tatasciore')
@@ -84,22 +88,21 @@ set identity_insert [Character] on; --drop table [Character]
 	,(31,'Goblins','Gumm-Gumm','Villain',null,'Alive','Trolls',null,'Arcadia','Large groups, Teeth',null,null,'Blue, Green',null,null)
 	-- http://trollhunters.wikia.com/wiki/Category:Characters?page=3
 	,(32,'Gatto','Neutral',null,null,'Alive','Volcanic Troll',null,'Argentina',null,'Lava, His Stomach',null,null,null,null)
-	,(33,'Señor Uhl',null,null,'Uhl the unforgiving','Alive','Human',null,'Arcadia',null,null,null,'Blonde',null,'Fred Tatasciore')
+	,(33,'Señor Uhl',null,'Teacher','Uhl the unforgiving','Alive','Human',38,'Arcadia',null,null,null,'Blonde',null,'Fred Tatasciore')
 	,(34,'Shannon Longhannon','Good','Ally',null,'Alive','Human',15,'Arcadia',null,null,'Blue','Brown',null,'Bebe Wood')
 	,(35,'Wumpa','Quagawumps','Ally',null,'Alive','Quagawump Troll',null,'Swamps of Florida','Blungo, Quagawumps','Spears','Green','Green','Quagawumps',null)
 	,(36,'Nyarlagroth','Gumm-Gumm','Bad',null,'Deceased','Huge Black Snake',null,'Darklands',null,'Large horns, Thick scales, Teeth, Tongues',null,null,null,null)
 	,(37,'Mrs. Nuñez',null,null,'Mom','Alive','Human',null,'Arcadia','Claire Nuñez, Enrique Nuñez, Mr. Nuñez','Politics, Soy Sausage','Brown','Black',null,'Andrea Navedo')
 	,(38,'Mr. Nuñez',null,null,'Dad','Alive','Human',null,'Arcadia','Claire Nuñez, Enrique Nuñez, Mrs. Nuñez','BBQ','Brown','Black',null,'Tom Kenny')
 	,(39,'Bagdwella','Good',null,null,'Alive','Troll',null,'Heartstone Trollmarket',null,null,'Orange','Red',null,'Fred Tatasciore')
-	,(40,'Coach Lawrence',null,null,'Coach','Alive','Human',56,'Arcadia',null,null,'Blue','Black',null,'Tom Wilson')
+	,(40,'Coach Lawrence',null,'Teacher','Coach','Alive','Human',56,'Arcadia',null,null,'Blue','Black',null,'Tom Wilson')
 	,(41,'Gnomes','Thieves',null,'Scum of the earth','Alive','Gnome',null,'Hearstone Trollmarket',null,'Speed, Size, Teeth',null,null,null,null)
 	,(42,'The Pixies','Bad',null,null,'Alive','Pixies',null,'Container',null,'Size, Speed, Hallucination',null,null,null,null)
 	,(43,'Blood Goblins','Gumm-Gumm','Villain',null,'Alive','Trolls',null,'Draklands, Arcadia','Large groups, Teeth',null,null,'White',null,null)
 	,(44,'Nana','Good',null,null,'Alive','Human',null,'Arcadia','Toby Domzalski','Lack of sight','Blue','Gray',null,null);
 set identity_insert [Character] off;
-go --/* 3552822 = 0x363636 = "36 36 36 00" little endian */
-
-set identity_insert Locations on; --drop table [Locations]
+go 
+set identity_insert [Locations] on; --drop table [Locations] 
 	insert into Locations (LocationId, LocationName, CharacterId) values
 	(1,'Arcadia Oaks High', 5)
 	,(2,'Arcadia Oaks High', 40)
@@ -114,78 +117,37 @@ set identity_insert Locations on; --drop table [Locations]
 	,(11,'Arcadia Oaks High', 34);
 set identity_insert Locations off;
 go 
-
---  +--------------------------------------------------+
---  | Angor spies on Jim and friends (Packet Sniffing) |
---  +--------------------------------------------------+
--- connect to alias Arcadia 10.20.110.182 default port 1433 or custom. Kernel prevents local-to-local.
-
-/* Angor Spies */
-/* Creeper Sun Blade: )xxxxx[;;;;;;;;;> */
-/* Creeper Sun Blade: )xxxxx[;;;;;;;;;> */
-
-select	'Angor spies on Jim and friends', getdate(), * 
-from	dbo.[Character] c 
-join	Locations l on c.CharacterId=l.CharacterId 
-and		c.Race='Human'
-and		l.LocationName='Arcadia Oaks High';
-
-create table dbo.Episode --drop table Episode
-( 
-    CharacterId		int           not null,
-    FullName		nvarchar(64)  not null,
-    VoicedBy		nvarchar(64)  not null,
-	BirthYear		int			  not null, 
-	Category		nvarchar(64)  not null,
-	[Status]		nvarchar(64)  not null,
-    Age				int			  not null
-    constraint PK_Episode primary key clustered ( CharacterId asc ) 
-);
-
-select '( ',c.CharacterId,', '''+FullName+'''',', '''+VoicedBy+''', ',year(dateadd(year,-age,getdate())), ', '''+Category+'''',', '''+[Status]+''', ' , Age ,' ), ' 
-from	Character c 
-join	Locations l on c.CharacterId=l.CharacterId 
+insert	[Episode] --drop table [Episode] 
+select	c.CharacterId, FullName, VoicedBy, year(dateadd(year,-age,getdate())), Category, [Status], Age 
+from	[Character] c 
+join	[Locations] l on c.CharacterId=l.CharacterId 
 and		c.Race='Human'
 and		l.LocationName='Arcadia Oaks High'
 order by c.CharacterId;
-
-
-insert into dbo.Episode (CharacterId, FullName, VoicedBy, BirthYear, Category, [Status], Age ) values
-( 	1	, 'Jim Lake Jr.'				, 'Anton Yelchin', 		2002	, 'Hero'	, 'Alive', 	16	 ), 
-( 	2	, 'Claire Maria Nuñez'			, 'Lexi Medrano', 		2003	, 'Hero'	, 'Alive', 	15	 ), 
-( 	13	, 'Tobias Domzalski'			, 'Charlie Saxton', 	2003	, 'Hero'	, 'Alive', 	15	 ), 
-( 	15	, 'Elijah Leslie Pepperjack'	, 'Cole Sand',			2003	, 'Hero'	, 'Alive', 	15	 ), 
-( 	16	, 'Steve Palchuk'				, 'Steven Yeun', 		2002	, 'Ally'	, 'Alive', 	16	 ), 
-( 	23	, 'Darci Scott'					, 'Yara Shahidi', 		2003	, 'Ally'	, 'Alive', 	15	 ), 
-( 	24	, 'Mary J. Wang'				, 'Lauren Tom', 		2003	, 'Hero'	, 'Alive', 	15	 ), 
-( 	33	, 'Señor Uhl'					, 'Fred Tatasciore', 	1980	, 'Teacher'	, 'Alive', 	38	 ), 
-( 	34	, 'Shannon Longhannon'			, 'Bebe Wood', 			2003	, 'Ally'	, 'Alive', 	15	 ), 
-( 	40	, 'Coach Lawrence'				, 'Tom Wilson', 		1962	, 'Coach'	, 'Alive', 	56	 )
-
-/* Creeper Sun Blade: )xxxxx[;;;;;;;;;> */
-/* Creeper Sun Blade: )xxxxx[;;;;;;;;;> */
-/* Angor Spies */
 go
 
---  +----------------------------------------------------------------------------------------+
---  | Angor releases Pixies as a divertion (causing hallucinations) and goes in for the kill |
---  +----------------------------------------------------------------------------------------+
---  Connect to Sewer and release Pixes. 
-
-/* 1101100000111011000010000001100011100111001000 */
-/* 1101000001110101000011101000000111011001101010 */
-/* 0011100011100101010001101111100000001000100110 */
-
-select @@servername as CurrentServer, db_name() as CurrentDB
-
-select 'Angor releases the Pixies', getdate(), * from dbo.Episode
-
-select 'Angor goes in for the kill', getdate(), * 
+--  +-----------------------------+------------------------------------------------+
+--  | Angor spies on Trollhunters | Summon SHARK ! Kernel prevents local-to-local. |
+--  +-----------------------------+------------------------------------------------+
+--  :connect TrollHunters
+select	'Angor spies on Jim and friends', getdate(), * 
 from	dbo.[Character] c 
-join	Locations l on c.CharacterId=l.CharacterId 
+join	[Locations] l on c.CharacterId=l.CharacterId 
 and		c.Race='Human'
 and		l.LocationName='Arcadia Oaks High';
+go
 
-/* 1110101010000000110001100000010010111100110111 */
-/* 1000111110011100111000101010110011101110000110 */
-/* 1011001011101000001101001100000001110010101100 */
+--  +---------------------------------------------+-------------------------------------------------------------------------------+
+--  | Angor releases Pixies, goes in for the kill | Release Pixies c# console app. 1101100000111011000010000001100011100111001000 |
+--  +---------------------------------------------+-------------------------------------------------------------------------------+
+--  :connect Pixes
+use [ᕙ༼,இܫஇ,༽ᕗ];
+select 'Angor releases the Pixies', getdate(), * from dbo.Episode;
+select 'Angor goes in for the kill', getdate();
+go
+
+--  +----------------+
+--  | Toby saves Jim |
+--  +----------------+
+--  Turn on Force Encryption, with Certificate.
+--  no more hallucinations. Jim and Toby kick Angor's butt and save Arcadia.

