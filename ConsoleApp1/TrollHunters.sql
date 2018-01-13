@@ -51,7 +51,6 @@ create table [Episode] (
     Age				int			  not null
     constraint PK_Episode primary key clustered (CharacterId asc));
 go
-
 set identity_insert [Character] on; --drop table [Character] 
 	insert into [Character] (CharacterId, FullName, Affiliation, Category, Aka, [Status], Race, Age, Home, Relatives, Weapons, EyeColor, HairColor, Minions, VoicedBy) values 
 	 (1,'Jim Lake Jr.','Good','Hero','Young Atlas, Jimbo, Master Jim, Fleshbag, Jim "Fake" Jr., Jimmy Jam, Little Gynt','Alive','Human',16,'Arcadia Oaks','Jim Lake Sr., Barbara Lake, Claire Nuñez','Sword of Daylight, Sword of Eclipse','Blue','Black','Toby Domzalski','Anton Yelchin')
@@ -140,7 +139,7 @@ go
 --  +---------------------------------------------+-------------------------------------------------------------------------------+
 --  | Angor releases Pixies, goes in for the kill | Release Pixies c# console app. 1101100000111011000010000001100011100111001000 |
 --  +---------------------------------------------+-------------------------------------------------------------------------------+
---  :connect Pixes
+--  :connect Pixes12345
 use [ᕙ༼,இܫஇ,༽ᕗ];
 select 'Angor releases the Pixies', getdate(), * from dbo.Episode;
 select 'Angor goes in for the kill', getdate();
