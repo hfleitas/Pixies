@@ -142,7 +142,12 @@ go
 --  :connect Pixes12345
 use [ᕙ༼,இܫஇ,༽ᕗ];
 select 'Angor releases the Pixies', getdate(), * from dbo.Episode;
-select 'Angor goes in for the kill', getdate();
+go
+select 'Angor goes in for the kill', getdate(), * 
+from	dbo.[Character] c 
+join	Locations l on c.CharacterId=l.CharacterId 
+and		c.Race='Human'
+and		l.LocationName='Arcadia Oaks High';
 go
 
 --  +----------------+
