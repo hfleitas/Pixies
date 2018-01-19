@@ -139,7 +139,7 @@ go
 --  +---------------------------------------------+-------------------------------------------------------------------------------+
 --  | Angor releases Pixies, goes in for the kill | Release Pixies c# console app. 1101100000111011000010000001100011100111001000 |
 --  +---------------------------------------------+-------------------------------------------------------------------------------+
---  :connect Pixes12345
+--  :connect Pixes10101
 use [ᕙ༼,இܫஇ,༽ᕗ];
 select 'Angor releases the Pixies', getdate(), * from dbo.Episode;
 go
@@ -153,5 +153,21 @@ go
 --  +----------------+
 --  | Toby saves Jim |
 --  +----------------+
---  Turn on Force Encryption, with Certificate.
+--  Turn on Force Encryption, with Certificate. Restart mssql svc.
 --  no more hallucinations. Jim and Toby kick Angor's butt and save Arcadia.
+--  :connect Pixes10101
+drop login angor
+
+--  +----------+
+--  | Lore DDM |
+--  +----------+
+use [ᕙ༼,இܫஇ,༽ᕗ]
+go 
+declare @sql varchar(max), @count int
+select @count = count(*) from [Character] c where c.FullName not in (select name from sysusers)
+while @count>0
+begin
+	select top 1 @sql = 'create user ['+FullName+'] without login;' from [Character] where Race = 'Human';
+	exec sp_executesql @sql
+end	
+go
