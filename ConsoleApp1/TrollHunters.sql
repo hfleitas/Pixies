@@ -157,17 +157,66 @@ go
 --  no more hallucinations. Jim and Toby kick Angor's butt and save Arcadia.
 --  :connect Pixes10101
 drop login angor
+go
 
 --  +----------+
 --  | Lore DDM |
 --  +----------+
 use [ᕙ༼,இܫஇ,༽ᕗ]
 go 
-declare @sql varchar(max), @count int
-select @count = count(*) from [Character] c where c.FullName not in (select name from sysusers)
-while @count>0
+-- add users with select
+declare @sql nvarchar(max), @count int
+select @count = count(*) from [Character] c inner join sysusers su on c.FullName = su.name where Race = 'Human';
+while @count < 17
 begin
-	select top 1 @sql = 'create user ['+FullName+'] without login;' from [Character] where Race = 'Human';
-	exec sp_executesql @sql
+	select top 1 @sql = 'create user ['+FullName+'] without login; grant select on [Character] to ['+FullName+'];' 
+	from [Character] where FullName not in (select name from sysusers) and Race = 'Human';
+	exec sp_executesql @sql;
+	select @count = count(*) from [Character] c inner join sysusers su on c.FullName = su.name where Race = 'Human';
 end	
+go
+select name from sysusers su inner join [Character] c on c.FullName = su.name;
+go
+-- drop users 
+/*
+use [ᕙ༼,இܫஇ,༽ᕗ]
+go 
+declare @sql nvarchar(max), @count int
+select @count = count(*) from [Character] c inner join sysusers su on c.FullName = su.name where Race = 'Human';
+while @count between 1 and 17 
+begin
+	select top 1 @sql = 'drop user if exists ['+FullName+'] ;' from [Character] where FullName in (select name from sysusers) and Race = 'Human';
+	exec sp_executesql @sql;
+	select @count = count(*) from [Character] c inner join sysusers su on c.FullName = su.name where Race = 'Human';
+end	
+go*/
+-- Mask the Agent column with DDM.
+go
+-- mask data
+alter table [Character] alter column FullName add masked with (function = 'Partial(0, "---", 0)');
+alter table [Character] alter column Aka add masked with (function = 'Partial(0, "---", 0)');
+alter table [Character] alter column Race add masked with (function = 'Partial(0, "---", 0)');
+alter table [Character] alter column Age add masked with (function = 'random(0,0)');
+alter table [Character] alter column Relatives add masked with (function = 'Partial(0, "---", 0)');
+alter table [Character] alter column EyeColor add masked with (function = 'Partial(0, "---", 0)');
+alter table [Character] alter column HairColor add masked with (function = 'Partial(0, "---", 0)');
+alter table [Character] alter column Minions add masked with (function = 'Partial(0, "---", 0)');
+go
+-- grant unmask
+grant unmask to [Jim Lake Jr.];
+go
+-- verify
+execute as user = 'Jim Lake Jr.';
+	select 'Seen as Jim' as Person, * from [Character]; 
+revert;
+go
+execute as user = 'Barbara Lake';
+	select 'Seen as Barbara' as Person, * from [Character]; 
+revert;
+go
+execute as user = 'Barbara Lake';
+	select 'Seen as Barbara' as Person, *
+	from [Character]
+	where FullName like '%Jim%' 
+revert;
 go
