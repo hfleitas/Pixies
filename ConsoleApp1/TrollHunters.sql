@@ -177,7 +177,7 @@ end
 go
 select name from sysusers su inner join [Character] c on c.FullName = su.name;
 go
--- drop users 
+--drop users 
 /*
 use [ᕙ༼,இܫஇ,༽ᕗ]
 go 
@@ -192,17 +192,17 @@ end
 go*/
 -- Mask the Agent column with DDM.
 go
--- mask data
+-- killahead bridge
 alter table [Character] alter column FullName add masked with (function = 'Partial(0, "---", 0)');
 alter table [Character] alter column Aka add masked with (function = 'Partial(0, "---", 0)');
 alter table [Character] alter column Race add masked with (function = 'Partial(0, "---", 0)');
-alter table [Character] alter column Age add masked with (function = 'random(0,0)');
+alter table [Character] alter column Age add masked with (function = 'default()'); --random(0,0) --alter table ... alter column ... drop masked;
 alter table [Character] alter column Relatives add masked with (function = 'Partial(0, "---", 0)');
 alter table [Character] alter column EyeColor add masked with (function = 'Partial(0, "---", 0)');
 alter table [Character] alter column HairColor add masked with (function = 'Partial(0, "---", 0)');
 alter table [Character] alter column Minions add masked with (function = 'Partial(0, "---", 0)');
-go
--- grant unmask
+go 
+-- become the trollhunter
 grant unmask to [Jim Lake Jr.];
 go
 -- verify
@@ -220,3 +220,81 @@ execute as user = 'Barbara Lake';
 	where FullName like '%Jim%' 
 revert;
 go
+-- Mom finds out.
+create table Letters (
+	Letter 	varchar(1) 	not null,
+	constraint PK_Letters primary key clustered (Letter asc));
+go --drop table letters
+insert Letters (Letter) values
+ ('A'),('B'),('C'),('D'),('E'),('F'),('G')
+,('H'),('I'),('J'),('K'),('L'),('M'),('N'),('Ñ'),('O'),('P')
+,('Q'),('R'),('S')
+,('T'),('U'),('V')
+,('W'),('X'),('Y'),('Z')
+,(' '),('.');
+go
+grant select on Letters to [Barbara Lake]; 
+go
+execute as user = 'Barbara Lake';
+	select 	'Seen as Barbara' as Person
+			,c.FullName
+			,L01.Letter as L01
+			,L02.Letter as L02
+			,L03.Letter as L03
+			,L04.Letter as L04
+			,L05.Letter as L05
+			,L06.Letter as L06
+			,L07.Letter as L07
+			,L08.Letter as L08
+			,L09.Letter as L09
+			,L10.Letter as L10
+			,L11.Letter as L11
+			,L12.Letter as L12
+			,L13.Letter as L13
+			,L14.Letter as L14
+			,L15.Letter as L15
+			,L16.Letter as L16
+			,L17.Letter as L17
+			,L18.Letter as L18
+			,L19.Letter as L19
+			,L20.Letter as L20
+			,L21.Letter as L21
+			,L22.Letter as L22
+			,L23.Letter as L23
+			,L24.Letter as L24
+			,L25.Letter as L25
+			,L26.Letter as L26
+			,L27.Letter as L27
+			,L28.Letter as L28
+			,L29.Letter as L29
+	from 	[Character] c
+	inner join Letters L01 on (L01.Letter = substring(c.FullName,01,1))
+	inner join Letters L02 on (L02.Letter = substring(c.FullName,02,1))
+	inner join Letters L03 on (L03.Letter = substring(c.FullName,03,1))
+	inner join Letters L04 on (L04.Letter = substring(c.FullName,04,1))
+	inner join Letters L05 on (L05.Letter = substring(c.FullName,05,1))
+	inner join Letters L06 on (L06.Letter = substring(c.FullName,06,1))
+	inner join Letters L07 on (L07.Letter = substring(c.FullName,07,1))
+	inner join Letters L08 on (L08.Letter = substring(c.FullName,08,1))
+	inner join Letters L09 on (L09.Letter = substring(c.FullName,09,1))
+	inner join Letters L10 on (L10.Letter = substring(c.FullName,10,1))
+	inner join Letters L11 on (L11.Letter = substring(c.FullName,11,1))
+	inner join Letters L12 on (L12.Letter = substring(c.FullName,12,1))
+	inner join Letters L13 on (L13.Letter = substring(c.FullName,13,1))
+	inner join Letters L14 on (L14.Letter = substring(c.FullName,14,1))
+	inner join Letters L15 on (L15.Letter = substring(c.FullName,15,1))
+	inner join Letters L16 on (L16.Letter = substring(c.FullName,16,1))
+	inner join Letters L17 on (L17.Letter = substring(c.FullName,17,1))
+	inner join Letters L18 on (L18.Letter = substring(c.FullName,18,1))
+	inner join Letters L19 on (L19.Letter = substring(c.FullName,19,1))
+	inner join Letters L20 on (L20.Letter = substring(c.FullName,20,1))
+	inner join Letters L21 on (L21.Letter = substring(c.FullName,21,1))
+	inner join Letters L22 on (L22.Letter = substring(c.FullName,22,1))
+	inner join Letters L23 on (L23.Letter = substring(c.FullName,23,1))
+	inner join Letters L24 on (L24.Letter = substring(c.FullName,24,1))
+	inner join Letters L25 on (L25.Letter = substring(c.FullName,25,1))
+	inner join Letters L26 on (L26.Letter = substring(c.FullName,26,1))
+	inner join Letters L27 on (L27.Letter = substring(c.FullName,27,1))
+	inner join Letters L28 on (L28.Letter = substring(c.FullName,28,1))
+	inner join Letters L29 on (L29.Letter = substring(c.FullName,29,1))
+revert;
