@@ -162,6 +162,7 @@ go
 --  +----------+
 --  | Lore DDM |
 --  +----------+
+--  :connect localhost
 use [ᕙ༼,இܫஇ,༽ᕗ]
 go 
 -- add users with select
@@ -192,7 +193,10 @@ end
 go*/
 -- Mask the Agent column with DDM.
 go
--- killahead bridge
+
+--  +------------------+
+--  | Killahead Bridge |
+--  +------------------+
 alter table [Character] alter column FullName add masked with (function = 'Partial(0, "---", 0)');
 alter table [Character] alter column Aka add masked with (function = 'Partial(0, "---", 0)');
 alter table [Character] alter column Race add masked with (function = 'Partial(0, "---", 0)');
@@ -202,25 +206,36 @@ alter table [Character] alter column EyeColor add masked with (function = 'Parti
 alter table [Character] alter column HairColor add masked with (function = 'Partial(0, "---", 0)');
 alter table [Character] alter column Minions add masked with (function = 'Partial(0, "---", 0)');
 go 
--- become the trollhunter
+
+--  +-------------------------------------------------------+
+--  | For the glory of Merlin, Daylight is mine to command! |
+--  +-------------------------------------------------------+
 grant unmask to [Jim Lake Jr.];
 go
--- verify
+
+--  +-----------------------------+
+--  | Jim becomes the Trollhunter |
+--  +-----------------------------+
 execute as user = 'Jim Lake Jr.';
 	select 'Seen as Jim' as Person, * from [Character]; 
 revert;
 go
+-- Mom doesn't know.
 execute as user = 'Barbara Lake';
 	select 'Seen as Barbara' as Person, * from [Character]; 
 revert;
 go
+-- Mom senses something's up.
 execute as user = 'Barbara Lake';
 	select 'Seen as Barbara' as Person, *
 	from [Character]
 	where FullName like '%Jim%' 
 revert;
 go
--- Mom finds out.
+
+--  +---------------+
+--  | Mom finds out |
+--  +---------------+
 create table Letters (
 	Letter 	varchar(1) 	not null,
 	constraint PK_Letters primary key clustered (Letter asc));
@@ -298,3 +313,9 @@ execute as user = 'Barbara Lake';
 	inner join Letters L28 on (L28.Letter = substring(c.FullName,28,1))
 	inner join Letters L29 on (L29.Letter = substring(c.FullName,29,1))
 revert;
+go
+
+--  +----------+
+--  | Lore RLS |
+--  +----------+
+--  :connect localhost
