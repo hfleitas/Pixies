@@ -197,14 +197,14 @@ go
 --  +------------------+
 --  | Killahead Bridge |
 --  +------------------+
-alter table [Character] alter column FullName add masked with (function = 'Partial(0, "---", 0)');
-alter table [Character] alter column Aka add masked with (function = 'Partial(0, "---", 0)');
-alter table [Character] alter column Race add masked with (function = 'Partial(0, "---", 0)');
-alter table [Character] alter column Age add masked with (function = 'default()'); --random(0,0) --alter table ... alter column ... drop masked;
-alter table [Character] alter column Relatives add masked with (function = 'Partial(0, "---", 0)');
-alter table [Character] alter column EyeColor add masked with (function = 'Partial(0, "---", 0)');
-alter table [Character] alter column HairColor add masked with (function = 'Partial(0, "---", 0)');
-alter table [Character] alter column Minions add masked with (function = 'Partial(0, "---", 0)');
+alter table [Character] alter column FullName	add masked with (function = 'Partial(0, "---", 0)');
+alter table [Character] alter column Aka		add masked with (function = 'Partial(0, "---", 0)');
+alter table [Character] alter column Race		add masked with (function = 'Partial(0, "---", 0)');
+alter table [Character] alter column Age		add masked with (function = 'default()'); --random(0,0)
+alter table [Character] alter column Relatives	add masked with (function = 'Partial(0, "---", 0)');
+alter table [Character] alter column EyeColor	add masked with (function = 'Partial(0, "---", 0)');
+alter table [Character] alter column HairColor	add masked with (function = 'Partial(0, "---", 0)');
+alter table [Character] alter column Minions	add masked with (function = 'Partial(0, "---", 0)');
 go 
 
 --  +-------------------------------------------------------+
@@ -315,7 +315,120 @@ execute as user = 'Barbara Lake';
 revert;
 go
 
+--  +--------------------------+
+--  | Killahead Bridge Dropped |
+--  +--------------------------+
+alter table [Character] alter column FullName	drop masked ;
+alter table [Character] alter column Aka		drop masked ;
+alter table [Character] alter column Race		drop masked ;
+alter table [Character] alter column Age		drop masked ;
+alter table [Character] alter column Relatives	drop masked ;
+alter table [Character] alter column EyeColor	drop masked ;
+alter table [Character] alter column HairColor	drop masked ;
+alter table [Character] alter column Minions	drop masked ;
+go 
+
 --  +----------+
 --  | Lore RLS |
 --  +----------+
 --  :connect localhost
+drop function if exists Portal.fn_PortalAccess;
+drop security policy if exists PortalPolicy;
+drop schema if exists Portal;
+go
+drop view if exists [Humans];
+go
+create view [Humans] as 
+	select	FullName, [Status], Age, Home, Relatives, EyeColor, HairColor
+	from	[Character]
+	where	( FullName = user_name() or Relatives like '%'+user_name()+'%' )
+	or		user_name()='Jim Lake Jr.';
+go
+--  Everyone in Arcadia knows eachother.
+declare @sql nvarchar(max), @count int
+select @count = count(*) from sys.database_permissions where permission_name = 'select' and object_name(major_id) = 'Humans' and user_name(grantee_principal_id) in (select FullName from [Character] where Race = 'Human')
+while @count < 17
+begin
+	select top 1 @sql = 'grant select on [Humans] to ['+FullName+'];'
+	from [Character] where FullName in (select name from sysusers) and Race = 'Human' 
+	and FullName not in (select user_name(grantee_principal_id) from sys.database_permissions where permission_name = 'select' and object_name(major_id) = 'Humans');
+	exec sp_executesql @sql;
+	select @count = count(*) from sys.database_permissions where permission_name = 'select' and object_name(major_id) = 'Humans' and user_name(grantee_principal_id) in (select FullName from [Character] where Race = 'Human')
+end	
+go
+select	user_name(grantee_principal_id) as [User], permission_name, object_name(major_id) as [OnObject] 
+from	sys.database_permissions 
+where	permission_name = 'select' 
+and		object_name(major_id) = 'Humans' 
+and		user_name(grantee_principal_id) in (select	FullName 
+											from	[Character] 
+											where	Race = 'Human')
+go
+--  Mom doesn't know about the Trolls.
+execute as user = 'Barbara Lake';
+	select 'Seen as Barbara' as Person, * from [Humans]; 
+revert;
+go
+--  By the glory of Merlin, Daylight is mine to command!
+execute as user = 'Jim Lake Jr.';
+	select 'Seen as Jim' as Person, * from [Humans]; 
+revert;
+go
+--  Only the heartstone can open the portal to Trollmarkert.
+create schema Portal --drop schema if exists Portal
+go
+create function Portal.fn_PortalAccess (@FullName as sysname, @Relatives as sysname) 
+returns table with schemabinding as
+return	select	1 as PortalAccess 
+		where	( @FullName = user_name() or @Relatives like '%'+user_name()+'%' )
+		or		user_name() = 'Jim Lake Jr.';
+go 
+create security policy PortalPolicy
+add filter predicate Portal.fn_PortalAccess (FullName, Relatives) on dbo.[Character] with (state = on);
+go 
+--  Trollhunters check if an RLS enchantment exists.
+select object_name(object_id) as ObjectName, * from sys.security_policies;
+select object_name(object_id) as ObjectName, * from sys.security_predicates;
+go
+--  Mom doesn't know about the Trolls.
+execute as user = 'Barbara Lake';
+	select 'Seen as Barbara' as Person, * from [Character]; 
+revert;
+go
+--  By the glory of Merlin, Daylight is mine to command!
+execute as user = 'Jim Lake Jr.';
+	select 'Seen as Jim' as Person, * from [Character]; 
+revert;
+go
+--  Gunmar gets the heartstone.
+alter security policy PortalPolicy with (state = off);
+go
+--  Trollhunters check if an RLS enchantment exists.
+select object_name(object_id) as ObjectName, * from sys.security_policies;
+select object_name(object_id) as ObjectName, * from sys.security_predicates;
+go
+--  Mom learns the trolls when Gunmar attacked Arcadia.
+execute as user = 'Barbara Lake';
+	select 'Seen as Barbara' as Person, * from [Character]; 
+revert;
+go
+--  Mom helps the trollhunters save Arcadia from the Gum-Gum army.
+execute as user = 'Barbara Lake';
+	select * from sys.partitions where object_id = object_id('dbo.Character');
+revert;
+go
+execute as user = 'Barbara Lake';
+    select 'Seen as Barbara' as Person, 1 / (Age - 16), * from [Character]; --Divide by zero error encountered.
+revert;
+go
+--Jim and the trollhunters fight the gum-gum army.
+alter security policy PortalPolicy with (state = on);
+go
+--  Mom continues to try to Jim.
+execute as user = 'Barbara Lake';
+    select 'Seen as Barbara' as Person, 1 / (Age - 16), * from [Character]; --Divide by zero error encountered after 2016 CUs, but would return the row.
+revert;
+execute as user = 'Barbara Lake';
+    select 'Seen as Barbara' as Person, * from [Character]
+	where 1 = 1 / (Age - 16); --Divide by zero error encountered. 
+revert;
