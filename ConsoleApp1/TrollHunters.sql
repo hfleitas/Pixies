@@ -375,7 +375,7 @@ execute as user = 'Jim Lake Jr.';
 revert;
 go
 --  Only the heartstone can open the portal to Trollmarkert.
-create schema Portal --drop schema if exists Portal
+create schema Portal; 
 go
 create function Portal.fn_PortalAccess (@FullName as sysname, @Relatives as sysname) 
 returns table with schemabinding as
@@ -428,7 +428,9 @@ go
 execute as user = 'Barbara Lake';
     select 'Seen as Barbara' as Person, 1 / (Age - 16), * from [Character]; --Divide by zero error encountered after 2016 CUs, but would return the row.
 revert;
+go
 execute as user = 'Barbara Lake';
     select 'Seen as Barbara' as Person, * from [Character]
 	where 1 = 1 / (Age - 16); --Divide by zero error encountered. 
 revert;
+go
