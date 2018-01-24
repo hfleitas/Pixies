@@ -1,5 +1,6 @@
 ﻿--  Troll Hunters: http://trollhunters.wikia.com/wiki/Trollhunters_Wiki , https://en.wikipedia.org/wiki/Trollhunters
 --  :connect localhost
+--  By: Hiram Fleitas, hiramfleitas@hotmail.com. Special thx to Lowell Izaguirre for xevent.
 --  +-------+
 --  | Armor |
 --  +-------+
@@ -37,56 +38,63 @@ begin
 end
 go --drop event session [AmuletOfDaylight] on server
 alter event session [AmuletOfDaylight] on server state = start --stop
+go
 
 --  +---------+
 --  | Defense |
 --  +---------+
 --  SQL Job to kill evil trolls and alert. 
 --  Run every 5 minutes or less.
-declare @count smallint, @msg nvarchar(max)
-declare @username varchar(max), @sqltext nvarchar(max), @spid int, @clienthost nvarchar(max), @kill nvarchar(max) = '', @db nvarchar(50)
+declare  @count smallint
+		,@body nvarchar(max)
+		,@css varchar(max)
+		,@username nvarchar(128)
+		,@sqltext nvarchar(max)
+		,@spid smallint = null
+		,@clienthost nvarchar(128)
+		,@kill nvarchar(max) = ''
+		,@db nvarchar(128);
 
-if object_id('tempdb..#xeAppErrors') is not null drop table #xeAppErrors
+set nocount on;
 
-select data = convert(xml, event_data) 
-into #xeAppErrors
-from sys.fn_xe_file_target_read_file('xeAppErrors*xel','xeAppErrors*xem',null,null)
-where event_data like '%"error_number"%>8134<%'
+if object_id('tempdb..#xeAppErrors') is not null drop table #xeAppErrors;
+
+select	data = cast(event_data as xml)
+into	#xeAppErrors
+from	sys.fn_xe_file_target_read_file('AmuletOfDaylight*xel','AmuletOfDaylight*xem',null,null)
+where	cast(event_data as xml).value('(event/data[@name="error_number"]/value)[1]', 'int') = 8134
+and		cast(event_data as xml).value('(event/@timestamp)[1]','datetime') > dateadd(mi,-50,getutcdate());
 			
-select	@count = count(*)
+select	@count = count(*) from	#xeAppErrors;
+select	top 1 	
+		@spid		= data.value('(event/action[@name="session_id"]/value)[1]', 'smallint')
+	   ,@username	= data.value('(event/action[@name="username"]/value)[1]', 'nvarchar(128)')
+	   ,@clienthost	= data.value('(event/action[@name="client_hostname"]/value)[1]', 'nvarchar(128)')
+	   ,@db			= data.value('(event/action[@name="database_name"]/value)[1]', 'nvarchar(128)')
+	   ,@sqltext	= data.value('(event/action[@name="sql_text"]/value)[1]', 'nvarchar(max)')
 from	#xeAppErrors 
-where	data.value('(event/@timestamp)[1]','datetime') > dateadd(mi,-5,getutcdate())
-
-if @spid>50 --is_user_process
-begin 
-	select @kill = @kill + 'kill ' + convert(varchar(5), @spid) + ';'
-	exec sp_executesql @kill
-end
+where	value('(event/data[@name="error_number"]/value)[1]', 'int') = 8134
+and		data.value('(event/@timestamp)[1]','datetime') > dateadd(mi,-50,getutcdate());
 
 --  +-----------------------------+	
 --  | How many hits can you take? |
 --  +-----------------------------+
-if @count>10
+if @count > 10 and @spid > 50 
 begin
-	select	@username = data.value('(event/action[@name="username"]/value)[1]', 'varchar(max)') 
-		   ,@sqltext = data.value('(event/action[@name="sql_text"]/value)[1]', 'nvarchar(max)') 
-		   ,@spid = data.value('(event/action[@name="session_id"]/value)[1]', 'nvarchar(max)')
-   		   ,@clienthost = data.value('(event/action[@name="client_hostname"]/value)[1]', 'nvarchar(max)')
-		   ,@db = event_data.value('(event/data[@name="database_name"]/value)[1]', 'nvarchar(50)')
-	from	#xeAppErrors 
-	where	data.value('(event/@timestamp)[1]','datetime') > dateadd(mi,-5,getutcdate())
-
-	set	@msg =	@@Servername	+char(13)+ 
-				@kill			+char(13)+ 
-				@db				+char(13)+ 
-				@username		+char(13)+ 
-				@clienthost		+char(13)+ 
-				@sqltext
-			
-	exec msdb.dbo.sp_send_dbmail @recipients ='trollhunters@arcadia.net' --input your own email!
+	select @kill =	@kill + 'kill ' + convert(varchar(5), @spid) + ';';
+	if exists(select session_id from sys.dm_exec_sessions where session_id=@spid) and @spid> 50 
+	begin 
+		--exec sp_executesql @kill;
+		print @kill
+	end
+	
+	select @body=@clienthost
+	exec msdb.dbo.sp_send_dbmail @recipients ='hf0524@universalproperty.com' --input your own email!
 		,@subject = 'Trolls are attacking' --Alert: Divide by zero attack.
 		,@body_format = 'html'
-		,@body = @msg
+		,@body = @body;
 end
 else begin print 'Coast is clear.' end
+go
+if object_id('tempdb..#xeAppErrors') is not null drop table #xeAppErrors
 go
