@@ -332,8 +332,8 @@ go
 --  | Lore RLS |
 --  +----------+
 --  :connect localhost
-drop function if exists Portal.fn_PortalAccess;
 drop security policy if exists PortalPolicy;
+drop function if exists Portal.fn_PortalAccess;
 drop schema if exists Portal;
 go
 drop view if exists [Humans];
@@ -426,7 +426,7 @@ alter security policy PortalPolicy with (state = on);
 go
 --  Mom continues to try to Jim.
 execute as user = 'Barbara Lake';
-    select 'Seen as Barbara' as Person, 1 / (Age - 16), * from [Character]; --Divide by zero error encountered after 2016 CUs, but would return the row.
+    select 'Seen as Barbara' as Person, 1 / (Age - 16), * from [Character]; --Patched error in SQL2016 CUs. SQL2017 RTM still occurs.
 revert;
 go
 execute as user = 'Barbara Lake';

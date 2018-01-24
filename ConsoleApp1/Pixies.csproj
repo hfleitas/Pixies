@@ -64,6 +64,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="AmuletOfDaylight.sql" />
     <Content Include="TrollHunters.sql" />
   </ItemGroup>
   <ItemGroup>
