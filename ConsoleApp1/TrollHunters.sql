@@ -1,6 +1,12 @@
 ﻿--  Troll Hunters: http://trollhunters.wikia.com/wiki/Trollhunters_Wiki , https://en.wikipedia.org/wiki/Trollhunters
 --  :connect localhost
 --  :connect TrollHunters
+--  By: Hiram Fleitas, hiramfleitas@hotmail.com. Special thx to Andy and Dmitri.
+go
+
+--  +------+
+--  | Lore |
+--  +------+
 if db_id(N'ᕙ༼,இܫஇ,༽ᕗ') is not null --drop/create db 
 begin
 	alter database [ᕙ༼,இܫஇ,༽ᕗ] set single_user with rollback immediate 
@@ -14,9 +20,6 @@ go
 
 use [ᕙ༼,இܫஇ,༽ᕗ]
 go 
---  +------+
---  | Lore |
---  +------+
 create table [Character] ( 
 	CharacterId		int identity(1,1)	not null,
     FullName		varchar(50)			not null,

@@ -1,6 +1,8 @@
 ﻿--  Troll Hunters: http://trollhunters.wikia.com/wiki/Trollhunters_Wiki , https://en.wikipedia.org/wiki/Trollhunters
 --  :connect localhost
 --  By: Hiram Fleitas, hiramfleitas@hotmail.com. Special thx to Lowell Izaguirre for xevent.
+go
+
 --  +-------+
 --  | Armor |
 --  +-------+
@@ -43,18 +45,16 @@ go
 --  +---------+
 --  | Defense |
 --  +---------+
---  SQL Job to kill evil trolls and alert. 
---  Run every 5 minutes or less.
+--  SQL Job to kill evil trolls and alert. Run every <=5 minutes.
 declare  @count smallint
 		,@body nvarchar(max)
-		,@css varchar(max)
+		,@crlf char(2) = char(13)+char(10)
 		,@username nvarchar(128)
 		,@sqltext nvarchar(max)
 		,@spid smallint = null
 		,@clienthost nvarchar(128)
 		,@kill nvarchar(max) = ''
 		,@db nvarchar(128);
-
 set nocount on;
 
 if object_id('tempdb..#xeAppErrors') is not null drop table #xeAppErrors;
@@ -73,7 +73,7 @@ select	top 1
 	   ,@db			= data.value('(event/action[@name="database_name"]/value)[1]', 'nvarchar(128)')
 	   ,@sqltext	= data.value('(event/action[@name="sql_text"]/value)[1]', 'nvarchar(max)')
 from	#xeAppErrors 
-where	value('(event/data[@name="error_number"]/value)[1]', 'int') = 8134
+where	data.value('(event/data[@name="error_number"]/value)[1]', 'int') = 8134
 and		data.value('(event/@timestamp)[1]','datetime') > dateadd(mi,-50,getutcdate());
 
 --  +-----------------------------+	
@@ -81,17 +81,23 @@ and		data.value('(event/@timestamp)[1]','datetime') > dateadd(mi,-50,getutcdate(
 --  +-----------------------------+
 if @count > 10 and @spid > 50 
 begin
-	select @kill =	@kill + 'kill ' + convert(varchar(5), @spid) + ';';
-	if exists(select session_id from sys.dm_exec_sessions where session_id=@spid) and @spid> 50 
+	if exists(select session_id from sys.dm_exec_sessions where session_id=@spid) 
 	begin 
+		select @kill =	@kill + 'kill ' + convert(varchar(5), @spid) + ';';
 		--exec sp_executesql @kill;
 		print @kill
 	end
-	
-	select @body=@clienthost
+
+	select @body = 
+	N'svr: '	+ @@servername	+ @crlf +
+	N'run: '	+ @kill			+ @crlf + 
+	N'host: '	+ @clienthost	+ @crlf + 
+	N'user: '	+ @username		+ @crlf + 
+	N'db: '		+ @db			+ @crlf + 
+	N't-sql: '	+ @sqltext		+ @crlf 
+
 	exec msdb.dbo.sp_send_dbmail @recipients ='hf0524@universalproperty.com' --input your own email!
 		,@subject = 'Trolls are attacking' --Alert: Divide by zero attack.
-		,@body_format = 'html'
 		,@body = @body;
 end
 else begin print 'Coast is clear.' end
