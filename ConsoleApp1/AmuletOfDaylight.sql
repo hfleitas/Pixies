@@ -99,7 +99,7 @@ begin
 	exec msdb.dbo.sp_send_dbmail @recipients ='hf0524@universalproperty.com' --input your own email!
 		,@subject = 'Trolls are attacking' --Alert: Divide by zero attack.
 		,@body = @body; 
-		--select * from msdb.dbo.sysmail_faileditems --sentitems, unsentitems
+		--select * from msdb..sysmail_faileditems --sentitems, unsentitems
 end
 else begin print 'Coast is clear.' end
 go
