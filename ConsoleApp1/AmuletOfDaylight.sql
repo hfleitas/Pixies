@@ -84,7 +84,7 @@ begin
 	if exists(select session_id from sys.dm_exec_sessions where session_id=@spid) 
 	begin 
 		select @kill =	@kill + 'kill ' + convert(varchar(5), @spid) + ';';
-		--exec sp_executesql @kill;
+		--exec sp_executesql @kill; --choose to kill or serve justice.
 		print @kill
 	end
 
