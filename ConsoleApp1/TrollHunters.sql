@@ -255,36 +255,15 @@ grant select on Letters to [Barbara Lake];
 go
 execute as user = 'Barbara Lake';
 	select 	'Seen as Barbara' as Person
-			,c.FullName
-			,L01.Letter as L01
-			,L02.Letter as L02
-			,L03.Letter as L03
-			,L04.Letter as L04
-			,L05.Letter as L05
-			,L06.Letter as L06
-			,L07.Letter as L07
-			,L08.Letter as L08
-			,L09.Letter as L09
-			,L10.Letter as L10
-			,L11.Letter as L11
-			,L12.Letter as L12
-			,L13.Letter as L13
-			,L14.Letter as L14
-			,L15.Letter as L15
-			,L16.Letter as L16
-			,L17.Letter as L17
-			,L18.Letter as L18
-			,L19.Letter as L19
-			,L20.Letter as L20
-			,L21.Letter as L21
-			,L22.Letter as L22
-			,L23.Letter as L23
-			,L24.Letter as L24
-			,L25.Letter as L25
-			,L26.Letter as L26
-			,L27.Letter as L27
-			,L28.Letter as L28
-			,L29.Letter as L29
+	,c.FullName
+	,L01.Letter as L01	,L02.Letter as L02	,L03.Letter as L03	,L04.Letter as L04
+	,L05.Letter as L05	,L06.Letter as L06	,L07.Letter as L07	,L08.Letter as L08
+	,L09.Letter as L09	,L10.Letter as L10	,L11.Letter as L11	,L12.Letter as L12
+	,L13.Letter as L13	,L14.Letter as L14	,L15.Letter as L15	,L16.Letter as L16
+	,L17.Letter as L17	,L18.Letter as L18	,L19.Letter as L19	,L20.Letter as L20
+	,L21.Letter as L21	,L22.Letter as L22	,L23.Letter as L23	,L24.Letter as L24
+	,L25.Letter as L25	,L26.Letter as L26	,L27.Letter as L27	,L28.Letter as L28
+	,L29.Letter as L29
 	from 	[Character] c
 	inner join Letters L01 on (L01.Letter = substring(c.FullName,01,1))
 	inner join Letters L02 on (L02.Letter = substring(c.FullName,02,1))
@@ -335,10 +314,10 @@ go
 --  | Lore RLS |
 --  +----------+
 --  :connect localhost
+--  add users with select. lines 172-181.
 drop security policy if exists PortalPolicy;
 drop function if exists Portal.fn_PortalAccess;
 drop schema if exists Portal;
-go
 drop view if exists [Humans];
 go
 create view [Humans] as 
@@ -348,7 +327,7 @@ create view [Humans] as
 	or		user_name()='Jim Lake Jr.';
 go
 --  Everyone in Arcadia knows eachother.
-declare @sql nvarchar(max), @count int
+declare @sql nvarchar(max)=null, @count int = null;
 select @count = count(*) from sys.database_permissions where permission_name = 'select' and object_name(major_id) = 'Humans' and user_name(grantee_principal_id) in (select FullName from [Character] where Race = 'Human')
 while @count < 17
 begin
@@ -413,7 +392,7 @@ go
 --  Mom learns the trolls when Gunmar attacked Arcadia.
 execute as user = 'Barbara Lake';
 	select 'Seen as Barbara' as Person, * from [Character]; 
-revert;
+revert; 
 go
 --  Mom helps the trollhunters save Arcadia from the Gum-Gum army.
 execute as user = 'Barbara Lake';
@@ -425,9 +404,9 @@ execute as user = 'Barbara Lake';
 revert;
 go
 --Jim and the trollhunters fight the gum-gum army.
-alter security policy PortalPolicy with (state = on);
+alter security policy PortalPolicy with (state = on); --Command(s) completed successfully.
 go
---  Mom continues to try to Jim.
+--  Mom continues to help Jim save Arcadia.
 execute as user = 'Barbara Lake';
     select 'Seen as Barbara' as Person, 1 / (Age - 16), * from [Character]; --Patched error in SQL2016 CUs. SQL2017 RTM still occurs.
 revert;
@@ -437,3 +416,10 @@ execute as user = 'Barbara Lake';
 	where 1 = 1 / (Age - 16); --Divide by zero error encountered. 
 revert;
 go
+
+--  +--------------------------------------------------------------------+
+--  | Barbara can brute-force devide by 0 to identify every integer.     |
+--  | Barbara can use the DDM letters table to identify every character. |
+--  | When all seems lost, our hero...									 |
+--	| Jim the Trollhunter has the Amulet Of Daylight!					 |
+--  +--------------------------------------------------------------------+
