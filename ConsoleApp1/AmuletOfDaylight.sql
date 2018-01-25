@@ -55,7 +55,7 @@ declare  @count smallint
 		,@clienthost nvarchar(128)
 		,@kill nvarchar(max) = ''
 		,@db nvarchar(128);
-set nocount on;
+set nocount, quoted_identifier, ansi_nulls on;
 
 if object_id('tempdb..#xeAppErrors') is not null drop table #xeAppErrors;
 
@@ -63,7 +63,7 @@ select	data = cast(event_data as xml)
 into	#xeAppErrors
 from	sys.fn_xe_file_target_read_file('AmuletOfDaylight*xel','AmuletOfDaylight*xem',null,null)
 where	cast(event_data as xml).value('(event/data[@name="error_number"]/value)[1]', 'int') = 8134
-and		cast(event_data as xml).value('(event/@timestamp)[1]','datetime') > dateadd(mi,-50,getutcdate());
+and		cast(event_data as xml).value('(event/@timestamp)[1]','datetime') > dateadd(mi,-5,getutcdate());
 			
 select	@count = count(*) from	#xeAppErrors;
 select	top 1 	
@@ -74,7 +74,7 @@ select	top 1
 	   ,@sqltext	= data.value('(event/action[@name="sql_text"]/value)[1]', 'nvarchar(max)')
 from	#xeAppErrors 
 where	data.value('(event/data[@name="error_number"]/value)[1]', 'int') = 8134
-and		data.value('(event/@timestamp)[1]','datetime') > dateadd(mi,-50,getutcdate());
+and		data.value('(event/@timestamp)[1]','datetime') > dateadd(mi,-5,getutcdate());
 
 --  +-----------------------------+	
 --  | How many hits can you take? |
