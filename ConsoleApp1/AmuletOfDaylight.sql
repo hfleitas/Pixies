@@ -84,7 +84,7 @@ begin
 	if exists(select session_id from sys.dm_exec_sessions where session_id=@spid) 
 	begin 
 		select @kill =	@kill + 'kill ' + convert(varchar(5), @spid) + ';';
-		--exec sp_executesql @kill; --choose to kill or serve justice.
+		--exec sp_executesql @kill; --serve justice.
 		print @kill
 	end
 
@@ -96,7 +96,7 @@ begin
 	N'db: '		+ @db			+ @crlf + 
 	N't-sql: '	+ @sqltext		+ @crlf 
 
-	exec msdb.dbo.sp_send_dbmail @recipients ='hf0524@universalproperty.com' --input your own email!
+	exec msdb.dbo.sp_send_dbmail @recipients ='trollhunters@arcadia.net' --input your own email!
 		,@subject = 'Trolls are attacking' --Alert: Divide by zero attack.
 		,@body = @body; 
 		--select * from msdb..sysmail_faileditems --sentitems, unsentitems
