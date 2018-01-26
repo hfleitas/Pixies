@@ -416,6 +416,12 @@ execute as user = 'Barbara Lake';
 	where 1 = 1 / (Age - 16); --Divide by zero error encountered. 
 revert; --9000, 4999, 600, 56, 38, 16, 15, 1
 go
+execute as user = 'Barbara Lake';
+	exec sp_columns [Character]; 
+	exec sp_pkeys [Character]; 
+	exec sp_fkeys [Character];
+revert;
+go
 
 --  +--------------------------------------------------------------------+
 --  | Barbara can brute-force devide by 0 to identify every integer.     |
