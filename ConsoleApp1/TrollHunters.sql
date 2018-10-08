@@ -13,8 +13,8 @@ begin
 	drop database [ᕙ༼,இܫஇ,༽ᕗ] end
 else begin 
 	create database [ᕙ༼,இܫஇ,༽ᕗ]
-	on primary (name='TrollHunters',filename='C:\Program Files\Microsoft SQL Server\MSSQL13.MSSQLSERVER\MSSQL\DATA\TrollHunters.mdf', size=64MB, maxsize=unlimited, filegrowth=64MB) --S:\SQLDATA\, C:\Program Files\Microsoft SQL Server\MSSQL13.MSSQLSERVER\MSSQL\DATA\
-	log on (name='TrollHunters_log',filename='C:\Program Files\Microsoft SQL Server\MSSQL13.MSSQLSERVER\MSSQL\DATA\TrollHunters_log.ldf', size=8MB, filegrowth=64MB) --L:\SQLLOGS\, C:\Program Files\Microsoft SQL Server\MSSQL13.MSSQLSERVER\MSSQL\DATA\
+	on primary (name='TrollHunters',filename='C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\DATA\TrollHunters.mdf', size=64MB, maxsize=unlimited, filegrowth=64MB) --S:\SQLDATA\, C:\Program Files\Microsoft SQL Server\MSSQL13.MSSQLSERVER\MSSQL\DATA\
+	log on (name='TrollHunters_log',filename='C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\DATA\TrollHunters_log.ldf', size=8MB, filegrowth=64MB) --L:\SQLLOGS\, C:\Program Files\Microsoft SQL Server\MSSQL13.MSSQLSERVER\MSSQL\DATA\
 end	
 go
 
