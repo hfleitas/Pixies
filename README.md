@@ -1,5 +1,5 @@
 # Pixies
-Trollhunters and the Amulet of Daylight
+## Trollhunters and the Amulet of Daylight
 
 Hack / Protect SQL Server - learn both.
 If you're using Dynamic Data Masking, Row-Level-Security or just SQL Server and you don't know how to hack it, then come to this session. 
