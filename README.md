@@ -1,7 +1,4 @@
 ![Trollhunters](https://i1.wp.com/geekdad.com/wp-content/uploads/2017/12/Trollhunter2-featured.jpg "https://i1.wp.com/geekdad.com/wp-content/uploads/2017/12/Trollhunter2-featured.jpg")
-
-![Pixies](https://vignette.wikia.nocookie.net/trollhunters/images/9/95/Pixies.png/revision/latest?cb=20161226035227 "https://vignette.wikia.nocookie.net/trollhunters/images/9/95/Pixies.png/revision/latest?cb=20161226035227")
-
 # Pixies
 ## Trollhunters and the Amulet of Daylight
 
@@ -14,7 +11,7 @@ I have some demos may leave you in aah. I'll show you how to also protect yourse
 2. DDM
 3. RLS
 4. Database Source Control 
-
+![Pixies](https://vignette.wikia.nocookie.net/trollhunters/images/9/95/Pixies.png/revision/latest?cb=20161226035227 "https://vignette.wikia.nocookie.net/trollhunters/images/9/95/Pixies.png/revision/latest?cb=20161226035227")
 ![AmuletOfDaylight](https://vignette.wikia.nocookie.net/trollhunters/images/5/56/5d429bd20a8fd8ed74c3b47c767ea674.png/revision/latest?cb=20181211184022 "https://vignette.wikia.nocookie.net/trollhunters/images/5/56/5d429bd20a8fd8ed74c3b47c767ea674.png/revision/latest?cb=20181211184022")
 
 ![TrollHunters](https://i1.wp.com/geekdad.com/wp-content/uploads/2017/12/TrollHunters.gif "https://i1.wp.com/geekdad.com/wp-content/uploads/2017/12/TrollHunters.gif")
